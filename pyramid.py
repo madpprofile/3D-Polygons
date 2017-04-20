@@ -1,7 +1,7 @@
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
 from OpenGL.GL import *
-import math
+import math, sys
 
 vertices = (
     ( 1, 0, -1),
@@ -52,20 +52,20 @@ def Cubo():
     glEnd()
     
 def prism(sides):
-    angle = 360.0/sides
+    angle = (360.0/sides) * (math.pi/180)
     faces, lines, vertexes = [], [], []
     
     #init
     i = 0
     for i in range(0, sides):
-        vertexes.append((math.sin(i*angle), -1, math.cos(i*angle)))
-        vertexes.append((math.sin(i*angle), 1, math.cos(i*angle)))
-        i+=1
+        vertexes.append((1*math.cos(i*angle) - 0*math.sin(i*angle), -1, 1*math.sin(i*angle) + 0*math.cos(i*angle)))
+        vertexes.append((1*math.cos(i*angle) - 0*math.sin(i*angle), 1, 1*math.sin(i*angle) + 0*math.cos(i*angle)))
+        #i+=1
     v_count = len(vertexes)
-    print(v_count)
+    #print(v_count)
     
     i = 0
-    for i in range(0, v_count):
+    for do_not_mind_me in range(0, v_count/2):
         a, b, c, d = i, i+1, i+2, i+3
         if a >= v_count:
             a -= v_count
@@ -75,20 +75,21 @@ def prism(sides):
             c -= v_count
         if d >= v_count:
             d -= v_count
-        lines.append((a,c))
         lines.append((a,b))
+        lines.append((a,c))
         lines.append((b,d))
         lines.append((c,d))
-        faces.append((a, b, c, d))
+        faces.append((a, b, d, c))
         i+=2
     
-    print('vertexes')
-    print(vertexes)
-    print('lines')
-    print(lines)
-    print('faces')
-    print(faces)
+#    print('vertexes')
+#    print(vertexes)
+#    print('lines')
+#    print(lines)
+#    print('faces')
+#    print(faces)
     
+    #lateral_faces
     glBegin(GL_QUADS)
     glColor3fv((1, 1, 1))
     for face in faces:
@@ -96,18 +97,20 @@ def prism(sides):
             glVertex3fv(vertexes[vertex])
     glEnd()
     
+    #top face
     glBegin(GL_POLYGON)
-    glColor3fv((1, 1, 1))
+    glColor3fv((1, 0, 0))
     vertex = 0
-    for vertex in range(0, v_count):
+    for do_not_mind_me in range(sides):
         glVertex3fv(vertexes[vertex])
         vertex+=2
     glEnd()
     
+    #bottom face
     glBegin(GL_POLYGON)
-    glColor3fv((1, 1, 1))
+    glColor3fv((0, 0, 1))
     vertex = 1
-    for vertex in range(0, v_count):
+    for do_not_mind_me in range(sides):
         glVertex3fv(vertexes[vertex])
         vertex+=2
     glEnd()
@@ -142,7 +145,7 @@ def pyramid(sides):
     #init
     i = 0
     for i in range(0, sides):
-        vertexes.append((math.sin(i*angle), -1, math.cos(i*angle)))
+        vertexes.append((math.cos(i*angle) - math.sin(i*angle), -1, math.sin(i*angle) + math.cos(i*angle)))
         i+=1
     #vertexes.append((0, 1, 0))
     c_count = len(vertexes)
@@ -187,10 +190,19 @@ def pyramid(sides):
     
 
 def display():
+    global polygon
+    global sides
+    sides = 3
+    if len(sys.argv) == 3:
+        sides = int(sys.argv[2])
+    if sys.argv[1] == "pyramid":
+        polygon = pyramid
+    elif sys.argv[1] == "prism":
+        polygon = prism
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
     glRotatef(2,1,3,0)
     #Cubo()
-    pyramid(6)
+    polygon(sides)
     glutSwapBuffers()
  
 def timer(i):
@@ -201,7 +213,11 @@ def timer(i):
 glutInit(sys.argv)
 glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_MULTISAMPLE)
 glutInitWindowSize(800,600)
-glutCreateWindow(b"Pyramid")
+
+if sys.argv[1] == "pyramid":
+    glutCreateWindow(b"Pyramid")
+else:
+    glutCreateWindow(b"Prism")
 glutDisplayFunc(display)
 glEnable(GL_MULTISAMPLE)
 glEnable(GL_DEPTH_TEST)
