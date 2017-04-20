@@ -1,6 +1,7 @@
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
 from OpenGL.GL import *
+import math
 
 vertices = (
     ( 1, 0, -1),
@@ -49,11 +50,147 @@ def Cubo():
         for vertice in linha:
             glVertex3fv(vertices[vertice])
     glEnd()
+    
+def prism(sides):
+    angle = 360.0/sides
+    faces, lines, vertexes = [], [], []
+    
+    #init
+    i = 0
+    for i in range(0, sides):
+        vertexes.append((math.sin(i*angle), -1, math.cos(i*angle)))
+        vertexes.append((math.sin(i*angle), 1, math.cos(i*angle)))
+        i+=1
+    v_count = len(vertexes)
+    print(v_count)
+    
+    i = 0
+    for i in range(0, v_count):
+        a, b, c, d = i, i+1, i+2, i+3
+        if a >= v_count:
+            a -= v_count
+        if b >= v_count:
+            b -= v_count
+        if c >= v_count:
+            c -= v_count
+        if d >= v_count:
+            d -= v_count
+        lines.append((a,c))
+        lines.append((a,b))
+        lines.append((b,d))
+        lines.append((c,d))
+        faces.append((a, b, c, d))
+        i+=2
+    
+    print('vertexes')
+    print(vertexes)
+    print('lines')
+    print(lines)
+    print('faces')
+    print(faces)
+    
+    glBegin(GL_QUADS)
+    glColor3fv((1, 1, 1))
+    for face in faces:
+        for vertex in face:
+            glVertex3fv(vertexes[vertex])
+    glEnd()
+    
+    glBegin(GL_POLYGON)
+    glColor3fv((1, 1, 1))
+    vertex = 0
+    for vertex in range(0, v_count):
+        glVertex3fv(vertexes[vertex])
+        vertex+=2
+    glEnd()
+    
+    glBegin(GL_POLYGON)
+    glColor3fv((1, 1, 1))
+    vertex = 1
+    for vertex in range(0, v_count):
+        glVertex3fv(vertexes[vertex])
+        vertex+=2
+    glEnd()
+    
+    #lines
+    glBegin(GL_LINES)
+    glColor3fv((0, 0, 0))
+    for line in lines:
+        for vertex in line:
+            glVertex3fv(vertexes[vertex])
+    glEnd()
+        
+    
+    '''
+    #Draw vertexes
+    colors =[(i, 0, 0), (0, i, 0), (0, 0, i), (i, i, i)]
+    glBegin(GL_POINTS)
+    i = 0
+    for vertex in range(0,len(vertexes)):
+        if i == 4:
+            i = 0
+        glColor3fv(colors[i])
+        glVertex3fv(vertexes[vertex])
+        i+=1
+    glEnd()
+    '''
+
+def pyramid(sides):
+    angle = 360.0/sides
+    faces, lines, vertexes = [], [], []
+    
+    #init
+    i = 0
+    for i in range(0, sides):
+        vertexes.append((math.sin(i*angle), -1, math.cos(i*angle)))
+        i+=1
+    #vertexes.append((0, 1, 0))
+    c_count = len(vertexes)
+    
+    i = 0
+    for i in range (0, c_count-1):
+        a, b = i, i+1
+        if a >= c_count:
+            a -= c_count
+        if b >= c_count:
+            b -= c_count
+        lines.append((a,b))
+        lines.append((a,c_count-1))
+        lines.append((b,c_count-1))
+        faces.append((a, b, c_count-1))
+        i+=1
+    lines.append((i,0))
+    lines.append((i,c_count-1))
+    lines.append((0,c_count-1))
+    faces.append((i, 0, c_count-1))
+    
+    glBegin(GL_TRIANGLE_FAN)
+    glColor3fv((1, 1, 1))
+    glVertex3fv((0, 1, 0))
+    for vertex in range(0, c_count):
+        glVertex3fv(vertexes[vertex])
+    glEnd()        
+    
+    '''
+    #Draw vertexes
+    colors =[(i, 0, 0), (0, i, 0), (0, 0, i), (i, i, i)]
+    glBegin(GL_POINTS)
+    i = 0
+    for vertex in range(0,len(vertexes)):
+        if i == 3:
+            i = 0
+        glColor3fv(colors[i])
+        glVertex3fv(vertexes[vertex])
+        i+=1
+    glEnd()
+    '''
+    
 
 def display():
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
     glRotatef(2,1,3,0)
-    Cubo()
+    #Cubo()
+    pyramid(6)
     glutSwapBuffers()
  
 def timer(i):
@@ -64,7 +201,7 @@ def timer(i):
 glutInit(sys.argv)
 glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_MULTISAMPLE)
 glutInitWindowSize(800,600)
-glutCreateWindow("CUBO")
+glutCreateWindow(b"Pyramid")
 glutDisplayFunc(display)
 glEnable(GL_MULTISAMPLE)
 glEnable(GL_DEPTH_TEST)
