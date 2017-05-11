@@ -2,7 +2,10 @@ from OpenGL.GLUT import *
 from OpenGL.GLU import *
 from OpenGL.GL import *
 import math, sys
-    
+
+//used for platonic solids
+phi = (1.0+math.sqrt(5))/2.0
+
 def prism(sides):
     angle = (360.0/sides) * (math.pi/180)
     faces, lines, vertexes = [], [], []
@@ -143,6 +146,62 @@ def pyramid(sides):
         glVertex3fv(vertexes[vertex])
     glEnd()
     '''
+'''
+Reference:
+	Octant  number				X	Y	Z	Octal (+=0,zyx)	Octal (+=1,zyx)
+	I	    top-front-right	    +	+	+			0				7
+	II	    top-back-right	    −	+	+			1				6
+	III	    top-back-left	    −   −   +			3				4
+	IV	    top-front-left	    +   −	+			2				5
+	V	    bottom-front-right	+	+	−			4				3
+	VI	    bottom-back-right	−	+	−			5				2
+	VII	    bottom-back-left	−	−	−			7				0
+	VIII	bottom-front-left	+	−	−			6				1
+
+icosahedron
+
+(0, ±1, ±φ)
+(±1, ±φ, 0)
+(±φ, 0, ±1) 
+
+(0, ±φ, ±1)
+(±φ, ±1, 0)
+(±1, 0, ±φ)
+
+Dodecahedron
+
+(±1, ±1, ±1)
+(0, ±1/φ, ±φ)
+(±1/φ, ±φ, 0)
+(±φ, 0, ±1/φ)
+
+(±1, ±1, ±1)
+(0, ±φ, ±1/φ)
+(±φ, ±1/φ, 0)
+(±1/φ, 0, ±φ)
+'''
+
+def icosahedron():
+	global phi
+    vertexes = [
+        (1, 1, 1), (0, 1/phi, phi), (1/phi, phi, 0), (phi, 0, 1/phi),
+        (1, 1, 1), (0, phi, 1/phi), (phi, 1/phi, 0), (1/phi, 0, phi),
+        (1, 1, 1), (0, 1/phi, phi), (1/phi, phi, 0), (phi, 0, 1/phi),
+        (1, 1, 1), (0, phi, 1/phi), (phi, 1/phi, 0), (1/phi, 0, phi),
+        (1, 1, 1), (0, 1/phi, phi), (1/phi, phi, 0), (phi, 0, 1/phi),
+        (1, 1, 1), (0, phi, 1/phi), (phi, 1/phi, 0), (1/phi, 0, phi),        
+    ]
+    edges = []
+    faces = []
+	
+
+def dodecahedron():
+	global phi
+    vertexes = [
+        ( 0,  1,  phi), ( 1,  phi,  0), ( phi,  0,  1), ( 0,  phi,  1), ( phi,  1,  0), ( 1,  0,  phi)
+    ]
+    edges = []
+    faces = []
     
 
 def display():
