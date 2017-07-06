@@ -101,29 +101,61 @@ def octahedron():
 
 #Aether (dark matter?)
 def dodecahedron():
+    color = (255, 215.0/255, 0)
     global isWireframe
     global phi
     vertexes = [
-        (1, 1, 1), (0, 1/phi, phi), (1/phi, phi, 0), (phi, 0, 1/phi),
-        (1, 1, 1), (0, phi, 1/phi), (phi, 1/phi, 0), (1/phi, 0, phi),
-
-        (1, 1, 1), (0, 1/phi, phi), (1/phi, phi, 0), (phi, 0, 1/phi),
-        (1, 1, 1), (0, phi, 1/phi), (phi, 1/phi, 0), (1/phi, 0, phi),
-
-        (1, 1, 1), (0, 1/phi, phi), (1/phi, phi, 0), (phi, 0, 1/phi),
-        (1, 1, 1), (0, phi, 1/phi), (phi, 1/phi, 0), (1/phi, 0, phi),        
+        (phi, 0, 1/phi), (phi, 0, -1/phi),
+        (1, 1, 1), (1, -1, 1), (1, 1, -1), (1, -1, -1),
+        (1/phi, phi, 0), (1/phi, -phi, 0),
+        (0, 1, phi), (0, -1, phi), (0, 1, -phi), (0, -1, -phi),
+        (-1/phi, phi, 0), (-1/phi, -phi, 0),
+        (-1, 1, 1), (-1, -1, 1), (-1, 1, -1), (-1, -1, -1),
+        (-phi, 0, 1/phi), (-phi, 0, -1/phi)
     ]
-    edges = []
-    faces = []
-    
-    glBegin(GL_TRIANGLES)
-    glColor3fv((255, 215.0/255, 0))
-    for face in faces:
-        for vertex in face:
-            glVertex3fv(vertexes[vertex])
-    glEnd()
-    #change line colors if it's not wireframe mode
-    glColor3fv((0, 0, 0))
+    edges = [
+        (0, 1), (0, 2), (0, 3),
+        (1, 4), (1, 5),
+        (2, 6), (2, 8),
+        (3, 7), (3, 9),
+        (4, 6), (4, 10),
+        (5, 7), (5, 11),
+        (6, 12),
+        (7, 13),
+        (8, 9), (8, 14),
+        (9, 15),
+        (10, 11), (10, 16),
+        (11, 17),
+        (12, 14), (12, 16),
+        (13, 15), (13, 17),
+        (14, 16), (14, 18),
+        (15, 18),
+        (16, 19),
+        (17, 19),
+        (18, 19)
+    ]
+    faces = [
+        (0, 1, 4, 6, 2), (0, 2, 8, 9, 3), (0, 3, 7, 5, 1),
+        (1, 4, 10, 11, 5), (2, 6, 12, 14, 8), (3, 9, 15, 13, 7),
+        (4, 6, 12, 16, 10), (5, 7 ,13, 17, 11), (8, 14, 18, 15, 9),
+        (10, 16, 19, 17, 11), (12, 14, 18, 19, 16), (17, 19, 16, 11, 10)
+    ]
+    '''
+        glColor3fv((1, 0, 0))
+        glBegin(GL_POINTS)
+        for vertex in vertexes:
+            glVertex3fv(vertex)
+        glEnd()
+    '''
+    glColor3fv(color)
+    if isWireframe == False:
+        for face in faces:
+            glBegin(GL_POLYGON)
+            for vertex in face:
+                glVertex3fv(vertexes[vertex])
+            glEnd()
+        #change line colors if it's not wireframe mode
+        glColor3fv((0, 0, 0))
     
     glBegin(GL_LINES)
     for edge in edges:
